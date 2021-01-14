@@ -30,3 +30,9 @@ def test_too_many_arguments():
     with pytest.raises(TooManyArgument) as pytest_wrapped_e:
         argsCaller(do_something, "a", "b")
     assert pytest_wrapped_e.value.argument_value == "b"
+
+def test_args_str_single():
+    assert argsCaller(do_something, "a").args_str() == "<name>"
+
+def test_args_str_default():
+    assert argsCaller(do_something_default, "a").args_str() == "<name> [<family> = Black]"

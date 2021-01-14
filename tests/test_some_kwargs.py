@@ -26,5 +26,5 @@ def test_too_many_argument():
 
 def test_unsupported_keyword():
     with pytest.raises(UnsupportedKeyArgument) as pytest_wrapped_e:
-        argsCaller(do_something, name='Joe', color="red")
+        argsCaller(do_something, name="Joe", color="red")
     assert pytest_wrapped_e.value.argument_name == "color"
