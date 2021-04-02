@@ -39,11 +39,22 @@ class argsCaller:
         if self.provided_args:
             raise TooManyArgument(self.provided_args[0])
 
+    def cast_to_annotation(self, value, param):
+        """
+        If value does not match the type in annotation in "param" cast it to the appropiate type
+        """
+        ann = param.annotation
+        if ann == Parameter.empty:  # No annotation was provided
+            return value
+        if not isinstance(value, ann):
+            value = ann(value)
+        return value
+
     def handle_positional_or_keyword(self, param):
         # if it was provived as a kwarg
         if param.name in self.kwargs.keys():
             # pass it as kwarg
-            self.new_kwargs[param.name] = self.kwargs[param.name]
+            self.new_kwargs[param.name] = self.cast_to_annotation(self.kwargs[param.name], param)
         else:
             # must be fetched from positional arguments
             try:
@@ -52,6 +63,7 @@ class argsCaller:
                 if param.default == Parameter.empty:
                     raise MissingArgument(param.name) from None
                 arg = param.default
+            arg = self.cast_to_annotation(arg, param)
             self.new_args.append(arg)
 
     def handle_var_positional(self, param):
